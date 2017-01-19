@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project( Sample )
+project( XML_to_Image )
 find_package( OpenCV REQUIRED )
-add_executable( sample_test src/simp_putText.cpp )
-target_link_libraries( sample_test ${OpenCV_LIBS} )
+add_executable( xmlImage parser.cpp )
+target_link_libraries( xmlImage ${OpenCV_LIBS} )
