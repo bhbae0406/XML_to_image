@@ -92,10 +92,10 @@ int main(void)
          for (xml_node<> * word = textLine->first_node("String"); word != 0;
                word = word->next_sibling("String"))
          {
-             hpos = word->first_attribute("HPOS")->value();
-             vpos = word->first_attribute("VPOS")->value();
-             height = word->first_attribute("HEIGHT")->value();
-             width = word->first_attribute("WIDTH")->value();
+             hpos = atoi(word->first_attribute("HPOS")->value());
+             vpos = atoi(word->first_attribute("VPOS")->value());
+             height = atoi(word->first_attribute("HEIGHT")->value());
+             width = atoi(word->first_attribute("WIDTH")->value());
              
              p1((int)(Xdimension * (hpos/(double)pageWidth)), (int)(Ydimension * (vpos/(double)pageHeight)));
              
