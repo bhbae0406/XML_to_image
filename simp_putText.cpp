@@ -8,9 +8,9 @@ int main( )
 { 
    Mat blank(1000, 900, CV_8UC3, Scalar(255,255,255));
    
-   std::cout << (double) ( 900 * (double)(2880/19268))<< std::endl;
 
-   Point p1( (double)(900 * (double)(2880/19268)), (double)(1000 * (double)(960/28892)));
+   
+   Point p1((int)(900 * (2880/(double)19268)), (int)(1000 * (960/(double)28892)));
    //Point p2(p1.x + ( * (1920/19268)), p1.y + (1000 * (672/28892)));
 
    std::cout << "X: " << p1.x << ", Y: " << p1.y << '\n';
@@ -25,5 +25,6 @@ int main( )
    imshow("Image",blank);
 
    waitKey( 0 );
+   
    return(0);
 }
