@@ -64,12 +64,12 @@ void PutText(cv::Mat& img, const std::string& text, const cv::Rect& roi, const c
 
 int main(void)
 {
-   rapidxml::file<> xmlFile("0033_copy.xml");
+   rapidxml::file<> xmlFile("0033.xml");
    rapidxml::xml_document<> doc;
     int hpos, vpos, height, width;
    doc.parse<0>(xmlFile.data());
     
-    Point p1, p2;
+    //Point p1, p2;
     int pageWidth = 19268;
     int pageHeight = 28892;
     int Xdimension = 900;
@@ -97,9 +97,9 @@ int main(void)
              height = atoi(word->first_attribute("HEIGHT")->value());
              width = atoi(word->first_attribute("WIDTH")->value());
              
-             p1((int)(Xdimension * (hpos/(double)pageWidth)), (int)(Ydimension * (vpos/(double)pageHeight)));
+             Point p1((int)(Xdimension * (hpos/(double)pageWidth)), (int)(Ydimension * (vpos/(double)pageHeight)));
              
-             p2(p1.x + (int)(Xdimension * (width/(double)pageWidth))
+             Point p2(p1.x + (int)(Xdimension * (width/(double)pageWidth))
                 , p1.y + (int)(Ydimension * (height/(double)pageHeight)));
              
              cv::Rect roi(p1.x, p1.y, (p2.x-p1.x), (p2.y-p1.y));
