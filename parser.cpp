@@ -62,18 +62,31 @@ void PutText(cv::Mat& img, const std::string& text, const cv::Rect& roi, const c
 }
 
 
-int main(void)
+int main(int argc, char* argv[])
 {
-   rapidxml::file<> xmlFile("0033.xml");
+   if (argc != 2)
+   {
+      cerr << "Program Usage: xml_image [xml_file.xml]" << '\n';
+      exit(1);
+   }
+
+   rapidxml::file<> xmlFile(argv[1]);
    rapidxml::xml_document<> doc;
     int hpos, vpos, height, width;
    doc.parse<0>(xmlFile.data());
-    
+
     //Point p1, p2;
+   //up to mobilize -- Xdimension = 2000, Ydimension = 3500
+
+   /* WORKING SOLUTION (jpeg image about 14 MB):
+      Xdim - 9500
+      Ydim - 9600
+      */
+   
     int pageWidth = 19268;
     int pageHeight = 28892;
-    int Xdimension = 900;
-    int Ydimension = 1000;
+    int Xdimension = 9500;
+    int Ydimension = 9600;
     
    //the root node is alto
    xml_node<> * root_node = doc.first_node();
@@ -82,6 +95,8 @@ int main(void)
       first_node("PrintSpace")->first_node("TextBlock");
     
     Mat blank(Xdimension, Ydimension, CV_8UC3, Scalar(255,255,255));
+
+    int counter = 0;
 
    for (xml_node<> * textBlock = first_textblock; textBlock != 0;
          textBlock = textBlock->next_sibling("TextBlock"))
@@ -101,25 +116,45 @@ int main(void)
              
              Point p2(p1.x + (int)(Xdimension * (width/(double)pageWidth))
                 , p1.y + (int)(Ydimension * (height/(double)pageHeight)));
+
+             counter++;
+
+             cout << "NumWords: " << counter << '\n';
              
+             cout << "Word: " << word->first_attribute("CONTENT")->value() << '\n';
+             cout << "P1.x =  " << p1.x << '\n';
+             cout << "P1.y = " << p1.y << '\n';
+             cout << "P2.x - p1.x = " << (p2.x-p1.x) << '\n';
+             cout << "P2.y - p1.y = " << (p2.y-p1.y) << '\n' << '\n';
              cv::Rect roi(p1.x, p1.y, (p2.x-p1.x), (p2.y-p1.y));
              
              
-             PutText(blank, "THE", roi, Scalar(255,0,0), FONT_HERSHEY_SCRIPT_SIMPLEX, 2.5, 2);
+             PutText(blank, word->first_attribute("CONTENT")->value(), roi, Scalar(0,0,0), FONT_HERSHEY_SIMPLEX,2,8);
              //putText(blank, "The", Point(50,100), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,0,0), 1);
-             imshow("Image",blank);
+
              
-             waitKey( 0 );
-             
-             return(0);
+            //if (strcmp("mobilize", word->first_attribute("CONTENT")->value()) == 0)
+             //{ 
+                //imshow("Image", blank);
+             /*
+                vector<int> compression_params;
+                compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+                compression_params.push_back(95);
+             */
+               
+                //return 0;
+            // }
          }
       }
    }
-    
+    vector<int> compression_params;
+   compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
+   compression_params.push_back(95);
+
     //putText(blank, "The", Point(50,100), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,0,0), 1);
-    imshow("Image",blank);
-    
-    waitKey( 0 );
+   imwrite("0033.jpg", blank, compression_params);
+   
+    //imshow("Image",blank);
     
     return(0);
 }
