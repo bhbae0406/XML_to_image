@@ -119,35 +119,22 @@ int main(int argc, char* argv[])
 
              counter++;
 
-             cout << "NumWords: " << counter << '\n';
+             // cout << "NumWords: " << counter << '\n';
              
-             cout << "Word: " << word->first_attribute("CONTENT")->value() << '\n';
-             cout << "P1.x =  " << p1.x << '\n';
-             cout << "P1.y = " << p1.y << '\n';
-             cout << "P2.x - p1.x = " << (p2.x-p1.x) << '\n';
-             cout << "P2.y - p1.y = " << (p2.y-p1.y) << '\n' << '\n';
+             // cout << "Word: " << word->first_attribute("CONTENT")->value() << '\n';
+             // cout << "P1.x =  " << p1.x << '\n';
+             // cout << "P1.y = " << p1.y << '\n';
+             // cout << "P2.x - p1.x = " << (p2.x-p1.x) << '\n';
+             // cout << "P2.y - p1.y = " << (p2.y-p1.y) << '\n' << '\n';
              cv::Rect roi(p1.x, p1.y, (p2.x-p1.x), (p2.y-p1.y));
              
              
              PutText(blank, word->first_attribute("CONTENT")->value(), roi, Scalar(0,0,0), FONT_HERSHEY_SIMPLEX,2,8);
-             //putText(blank, "The", Point(50,100), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,0,0), 1);
-
-             
-            //if (strcmp("mobilize", word->first_attribute("CONTENT")->value()) == 0)
-             //{ 
-                //imshow("Image", blank);
-             /*
-                vector<int> compression_params;
-                compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
-                compression_params.push_back(95);
-             */
-               
-                //return 0;
-            // }
          }
       }
    }
-    vector<int> compression_params;
+   cout << "NumWords: " << counter << '\n';
+   vector<int> compression_params;
    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
    compression_params.push_back(95);
 
