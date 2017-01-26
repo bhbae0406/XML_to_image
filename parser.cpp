@@ -1,4 +1,6 @@
 #include <string.h>
+#include <string>
+#include <cstring>
 #include <stdio.h>
 #include <fstream>
 #include <vector>
@@ -69,6 +71,10 @@ int main(int argc, char* argv[])
       cerr << "Program Usage: xml_image [xml_file.xml]" << '\n';
       exit(1);
    }
+   string inputFile(argv[1]);
+
+   auto const found = inputFile.find_last_of('.');
+   auto filename = inputFile.substr(0,found);
 
    rapidxml::file<> xmlFile(argv[1]);
    rapidxml::xml_document<> doc;
@@ -179,7 +185,7 @@ int main(int argc, char* argv[])
    compression_params.push_back(95);
 
    //putText(blank, "The", Point(50,100), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,0,0), 1);
-   imwrite("0033.jpg", blank, compression_params);
+   imwrite( filename + ".jpg", blank, compression_params);
    //imshow("Image",blank);
 
    return(0);
