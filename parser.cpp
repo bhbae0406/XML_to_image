@@ -164,8 +164,12 @@ int main(int argc, char* argv[])
             // cout << "P2.y - p1.y = " << (p2.y-p1.y) << '\n' << '\n';
             cv::Rect roi(p1.x, p1.y, (p2.x-p1.x), (p2.y-p1.y));
 
-
-            PutText(blank, word->first_attribute("CONTENT")->value(), roi, Scalar(0,0,0), FONT_HERSHEY_SIMPLEX,2,8);
+            if ((p1.x < lP1.x) || (p1.y<lP1.y) || (p2.x > lP2.x) || (p2.y > lP2.y)) {
+            	continue;
+            } else {
+            	PutText(blank, word->first_attribute("CONTENT")->value(), roi, Scalar(0,0,0), FONT_HERSHEY_SIMPLEX,2,8);
+            }
+            
          }
       }
    }
@@ -176,7 +180,6 @@ int main(int argc, char* argv[])
 
    //putText(blank, "The", Point(50,100), FONT_HERSHEY_SIMPLEX, 1, Scalar(0,0,0), 1);
    imwrite("0033.jpg", blank, compression_params);
-
    //imshow("Image",blank);
 
    return(0);
