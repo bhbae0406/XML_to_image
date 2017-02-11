@@ -86,8 +86,8 @@ void Parser::initPicture()
    outImg(Xdimension, Ydimension, CV_8UC3, Scalar(255,255,255));
 }
 
-void Parser::drawBlock(rapidxml::xml_node<>& object, cv::Scalar& color)
-{
+// void Parser::drawBlock(rapidxml::xml_node<>& object, cv::Scalar& color)
+
 
 
 int main(int argc, char* argv[])
@@ -195,9 +195,10 @@ int main(int argc, char* argv[])
             	PutText(blank, word->first_attribute("CONTENT")->value(), roi, Scalar(0,0,0), FONT_HERSHEY_SIMPLEX,2,8);
             }
             
-         }
-      }
-   }
+         } // string for loop
+      } // textLine for loop
+   } // textBlock for loop
+
    cout << "NumWords: " << counter << '\n';
    vector<int> compression_params;
    compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
