@@ -10,13 +10,16 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
+#include "parser.h"
 
 using namespace cv;
 using namespace rapidxml;
 using namespace std;
 
+Parser(pWidth, pHeight, Xdim, Ydim): 
+   pageWidth{pWidth}, pageHeight{pHeight}, Xdimension{Xdim}, Ydimension{Ydim};
 
-void PutText(cv::Mat& img, const std::string& text, const cv::Rect& roi, const cv::Scalar& color, int fontFace, double fontScale, int thickness = 1, int lineType = 8)
+void Parser::PutText(cv::Mat& img, const std::string& text, const cv::Rect& roi, const cv::Scalar& color, int fontFace, double fontScale, int thickness = 1, int lineType = 8)
 {
    CV_Assert(!img.empty() && (img.type() == CV_8UC3 || img.type() == CV_8UC1));
    CV_Assert(roi.area() > 0);
@@ -62,6 +65,29 @@ void PutText(cv::Mat& img, const std::string& text, const cv::Rect& roi, const c
    cv::Mat destRoi = img(roi);
    textImg.copyTo(destRoi, textImgMask);
 }
+
+
+rapidxml::xml_node<>* Parser::readImage(const std::string& xmlFile)
+{
+   rapidxml::file<> xmlDoc(xmlFile);
+   rapidxml::xml_document<> doc;
+   doc.parse<0>(xmlDoc.data());
+
+   rapidxml::xml_node<> * root_node = doc.first_node();
+   rapidxml::xml_node<> * layout_node = root_node->first_node("Layout");
+   rapidxml::xml_node<> * first_textblock = layout_node->first_node("Page")->
+      first_node("PrintSpace")->first_node("TextBlock");
+
+   return first_textblock;
+}
+
+void Parser::initPicture()
+{
+   outImg(Xdimension, Ydimension, CV_8UC3, Scalar(255,255,255));
+}
+
+void Parser::drawBlock(rapidxml::xml_node<>& object, cv::Scalar& color)
+{
 
 
 int main(int argc, char* argv[])
@@ -161,13 +187,6 @@ int main(int argc, char* argv[])
 
             counter++;
 
-            // cout << "NumWords: " << counter << '\n';
-
-            // cout << "Word: " << word->first_attribute("CONTENT")->value() << '\n';
-            // cout << "P1.x =  " << p1.x << '\n';
-            // cout << "P1.y = " << p1.y << '\n';
-            // cout << "P2.x - p1.x = " << (p2.x-p1.x) << '\n';
-            // cout << "P2.y - p1.y = " << (p2.y-p1.y) << '\n' << '\n';
             cv::Rect roi(p1.x, p1.y, (p2.x-p1.x), (p2.y-p1.y));
 
             if ((p1.x < lP1.x) || (p1.y<lP1.y) || (p2.x > lP2.x) || (p2.y > lP2.y)) {
