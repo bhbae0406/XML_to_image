@@ -33,15 +33,17 @@ double getWidthCharRatio(rapidxml::xml_node<>* textLine)
 {
    string text;
    int charCount = 0;
+   double width = 0;
 
    for (xml_node<>* word = textLine->first_node("String"); word != 0;
          word = word->next_sibling("String"))
    {
       text = word->first_attribute("CONTENT")->value();
+      width += atof(word->first_attribute("WIDTH")->value());
       charCount += text.length();
    }
 
-   double width = atoi(textLine->first_attribute("WIDTH")->value());
+   //double width = atoi(textLine->first_attribute("WIDTH")->value());
 
    width = Xdimension * (width / (double)pageWidth);
 
@@ -50,10 +52,10 @@ double getWidthCharRatio(rapidxml::xml_node<>* textLine)
 
 double getObjectHeight(rapidxml::xml_node<>* block)
 {       
-   int xmlHeight = 0;
-   xmlHeight = atoi(block->first_attribute("HEIGHT")->value());
+   double xmlHeight = 0;
+   xmlHeight = atof(block->first_attribute("HEIGHT")->value());
 
-   return (Ydimension * (xmlHeight/(double)pageHeight));
+   return (Ydimension * (xmlHeight/pageHeight));
 }
 
 int getNumStrings(rapidxml::xml_node<>* textLine)
@@ -130,7 +132,6 @@ void displayImage(int, void*)
          
          
          if ((getObjectHeight(textLine) > tempHeight) &&
-               (getNumStrings(textLine) < numThresh) &&
                (getWidthCharRatio(textLine) > tempRatio))
          {
             drawBlock(textLine, Scalar(0,0,255));
@@ -176,8 +177,10 @@ int main(int argc, char* argv[])
 
    createTrackbar("heightThresh", "Threshold Result", &heightThresh, 3071,
          displayImage);
+   /*
    createTrackbar("numThresh", "Threshold Result", &numThresh, 30,
-         displayImage);
+        displayImage);
+   */
    createTrackbar("widthChar", "Threshold Result", &widthCharRatio, 3019,
          displayImage);
    displayImage(0,0);
