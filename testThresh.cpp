@@ -58,7 +58,13 @@ double getObjectHeight(rapidxml::xml_node<>* block)
 
    return (Ydimension * (xmlHeight/pageHeight));
 }
+double getObjectWidth(rapidxml::xml_node<>* block)
+{       
+   double xmlHeight = 0;
+   xmlHeight = atof(block->first_attribute("WIDTH")->value());
 
+   return (Ydimension * (xmlHeight/pageHeight));
+}
 void drawBlock(rapidxml::xml_node<>* block, cv::Scalar color)
 {
    int rHpos = atoi(block->first_attribute("HPOS")->value());
@@ -113,19 +119,24 @@ void displayImage(int, void*)
    imshow("Threshold Result", blank);
 }
 
+double getVPOS(rapidxml::xml_node<>* block) {
+   int Vpos = atoi(block->first_node("TextLine")->first_attribute("VPOS")->value());
+      return (Ydimension * (Vpos/(double)pageHeight));
+}
+double getHPOS(rapidxml::xml_node<>* block) {
+   int Vpos = atoi(block->first_node("TextLine")->first_attribute("HPOS")->value());
+      return (Ydimension * (Vpos/(double)pageHeight));
+}
+
 void displayBlock(int, void*)
 {
-   //double min = 1000.0;
-   //double max = 0.0;
-   //double ratio = 0.0;
-   double tempRatio = 0.0;
-   double tempHeight = 0.0;
-   double prevVPOS1 = first_textblock->first_node("TextLine")->first_attribute("VPOS");
-   double prevHPOS1 = first_textblock->first_node("TextLine")->first_attribute("HPOS");
-   double prevHPOS1 = prevHPOS1 + first_textblock->first_node("TextLine")->first_attribute("width");
+   double prev_v = getVPOS(first_textblock);
+   double prev_h1 = getHPOS(first_textblock);
+   double prev_h2 = prev_h1 + getObjectWidth(first_textblock);
+   double tempBlock = 0.0;
 
-   Point p1 (prevHPOS, prevVPOS1);
-   Point p2 (first_textblock->first_node("TextLine")->first_attribute("HPOS"), prevVPOS2);
+   Point p1(prev_h1, prev_v);
+   Point p2(prev_h2, prev_v);
    Point p3;
    Point p4;
 
@@ -135,40 +146,27 @@ void displayBlock(int, void*)
       for (rapidxml::xml_node<>* textLine = textBlock->first_node("TextLine");
             textLine != 0; textLine = textLine->next_sibling("TextLine"))
       {
-
-         tempRatio = widthCharRatio / (double)10;
-         tempRatio += 1.64348; //so min is 1.64348
-
-         tempHeight = heightThresh / (double)10;
-         tempHeight += 11.9618;
-
          tempBlock = blockThresh / (double)10;
          tempBlock += 11.9618;
 
-         if (abs(prevVpos-textLine->first_attribute("VPOS")) > tempBlock) {
-            p3.set(prevHPOS, )
-            segmentBlock(p1, p2, p3, p4 , Scalar(0,0,255));
-            p1.set(textLine->first_attribute("HPOS"), textLine->first_attribute("VPOS"));
-            p2.set(textLine->first_attribute("HPOS"), textLine->first_attribute("VPOS") + textLine->first_attribute("width"));
+         if (abs(prev_v - getVPOS(textLine)) > tempBlock) {
+            p3 = Point(prev_h1, prev_v);
+            p4 = Point(prev_h2, prev_v);
+            rectangle(blank, p1, p4, Scalar(0,0,255), 7);
+            // segmentBlock(p1, p2, p3, p4 , Scalar(0,0,255));
+
+            prev_v = getVPOS(textLine);
+            prev_h1 = getHPOS(textLine);
+            prev_h2 = prev_h1 + getObjectWidth(textLine);
+            p1 = Point(prev_h1, prev_v);
+            p2 = Point(prev_h2, prev_v);
+         } else {
+            prev_v = getVPOS(textLine);
+            prev_h1 = getHPOS(textLine);
+            prev_h2 = prev_h1 + getObjectWidth(textLine);
          }
-
-         prevVPOS1 = textLine->first_attribute("VPOS");
-         prevVPOS2 = prevVPOS1 + textLine->first_attribute("width");
-         prevHPOS = textLine->first_attribute("HPOS");
-         // if ((getObjectHeight(textLine) > tempHeight) &&
-         //       (getWidthCharRatio(textLine) > tempRatio))
-         // {
-         //    drawBlock(textLine, Scalar(0,0,255));
-         // }
-
-         // else
-         // {
-         //    drawBlock(textLine, Scalar(255,0,0));
-         // }
-         
       }
    }
-
    imshow("Threshold Result", blank);
 }
 
