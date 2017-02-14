@@ -18,6 +18,7 @@ using namespace cv;
 
 int heightThresh = 0;
 int numThresh = 0;
+int blockThresh = 0;
 int widthCharRatio = 0;
 
 int pageWidth = 19268;
@@ -112,6 +113,65 @@ void displayImage(int, void*)
    imshow("Threshold Result", blank);
 }
 
+void displayBlock(int, void*)
+{
+   //double min = 1000.0;
+   //double max = 0.0;
+   //double ratio = 0.0;
+   double tempRatio = 0.0;
+   double tempHeight = 0.0;
+   double prevVPOS1 = first_textblock->first_node("TextLine")->first_attribute("VPOS");
+   double prevHPOS1 = first_textblock->first_node("TextLine")->first_attribute("HPOS");
+   double prevHPOS1 = prevHPOS1 + first_textblock->first_node("TextLine")->first_attribute("width");
+
+   Point p1 (prevHPOS, prevVPOS1);
+   Point p2 (first_textblock->first_node("TextLine")->first_attribute("HPOS"), prevVPOS2);
+   Point p3;
+   Point p4;
+
+   for (rapidxml::xml_node<>* textBlock = first_textblock; textBlock != 0;
+         textBlock = textBlock->next_sibling("TextBlock"))
+   {
+      for (rapidxml::xml_node<>* textLine = textBlock->first_node("TextLine");
+            textLine != 0; textLine = textLine->next_sibling("TextLine"))
+      {
+
+         tempRatio = widthCharRatio / (double)10;
+         tempRatio += 1.64348; //so min is 1.64348
+
+         tempHeight = heightThresh / (double)10;
+         tempHeight += 11.9618;
+
+         tempBlock = blockThresh / (double)10;
+         tempBlock += 11.9618;
+
+         if (abs(prevVpos-textLine->first_attribute("VPOS")) > tempBlock) {
+            p3.set(prevHPOS, )
+            segmentBlock(p1, p2, p3, p4 , Scalar(0,0,255));
+            p1.set(textLine->first_attribute("HPOS"), textLine->first_attribute("VPOS"));
+            p2.set(textLine->first_attribute("HPOS"), textLine->first_attribute("VPOS") + textLine->first_attribute("width"));
+         }
+
+         prevVPOS1 = textLine->first_attribute("VPOS");
+         prevVPOS2 = prevVPOS1 + textLine->first_attribute("width");
+         prevHPOS = textLine->first_attribute("HPOS");
+         // if ((getObjectHeight(textLine) > tempHeight) &&
+         //       (getWidthCharRatio(textLine) > tempRatio))
+         // {
+         //    drawBlock(textLine, Scalar(0,0,255));
+         // }
+
+         // else
+         // {
+         //    drawBlock(textLine, Scalar(255,0,0));
+         // }
+         
+      }
+   }
+
+   imshow("Threshold Result", blank);
+}
+
 
 int main(int argc, char* argv[])
 {
@@ -144,6 +204,9 @@ int main(int argc, char* argv[])
 
    createTrackbar("widthChar", "Threshold Result", &widthCharRatio, 3019,
          displayImage);
+
+   createTrackbar("BlockHeight", "Threshold Result", &blockThresh, 3019,
+         displayBlock);
    
    displayImage(0,0);
    waitKey();
