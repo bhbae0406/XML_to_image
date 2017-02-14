@@ -58,18 +58,6 @@ double getObjectHeight(rapidxml::xml_node<>* block)
    return (Ydimension * (xmlHeight/pageHeight));
 }
 
-int getNumStrings(rapidxml::xml_node<>* textLine)
-{
-   int count = 0;
-   for (rapidxml::xml_node<>* word = textLine->first_node("String"); word != 0;
-         word = word->next_sibling("String"))
-   {
-      ++count;
-   }
-
-   return count;
-}
-
 void drawBlock(rapidxml::xml_node<>* block, cv::Scalar color)
 {
    int rHpos = atoi(block->first_attribute("HPOS")->value());
@@ -101,36 +89,12 @@ void displayImage(int, void*)
       for (rapidxml::xml_node<>* textLine = textBlock->first_node("TextLine");
             textLine != 0; textLine = textLine->next_sibling("TextLine"))
       {
-         //cout << "Object Height: " << getObjectHeight(textLine) << '\n';
-         //ratio = getObjectHeight(textLine);
-         //cout << "Ratio = " << ratio << '\n';
-
-         /*
-         
-         if (ratio > max)
-            max = ratio;
-         if (ratio < min)
-            min = ratio;
-
-         cout << "Min Ratio = " << min << '\n';
-         cout << "Max Ratio = " << max << '\n';
-         
-         */
-
          tempRatio = widthCharRatio / (double)10;
          tempRatio += 1.64348; //so min is 1.64348
 
          tempHeight = heightThresh / (double)10;
          tempHeight += 11.9618;
 
-         /*
-         if (getObjectHeight(textLine) <= 39.8726)
-         {
-            drawBlock(textLine, Scalar(255,0,0));
-         }
-         */
-         
-         
          if ((getObjectHeight(textLine) > tempHeight) &&
                (getWidthCharRatio(textLine) > tempRatio))
          {
@@ -177,12 +141,10 @@ int main(int argc, char* argv[])
 
    createTrackbar("heightThresh", "Threshold Result", &heightThresh, 3071,
          displayImage);
-   /*
-   createTrackbar("numThresh", "Threshold Result", &numThresh, 30,
-        displayImage);
-   */
+
    createTrackbar("widthChar", "Threshold Result", &widthCharRatio, 3019,
          displayImage);
+   
    displayImage(0,0);
    waitKey();
 
